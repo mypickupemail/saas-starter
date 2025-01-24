@@ -61,7 +61,7 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
         </CardHeader>
         <CardContent>
           <ul className="space-y-4">
-            {teamData.teamMembers.map((member, index) => (
+            {teamData.members.map((member, index) => (
               <li key={member.id} className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <Avatar>

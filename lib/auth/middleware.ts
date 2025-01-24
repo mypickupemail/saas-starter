@@ -1,7 +1,9 @@
-import { z } from 'zod';
-import { TeamDataWithMembers, User } from '@/lib/db/schema';
-import { getTeamForUser, getUser } from '@/lib/db/queries';
-import { redirect } from 'next/navigation';
+import { z } from "zod";
+import { redirect } from "next/navigation";
+import { auth } from "./config";
+import db from "../db";
+import { TeamDataWithMembers } from "../db/schema";
+import { User } from "next-auth";
 
 export type ActionState = {
   error?: string;
@@ -23,7 +25,6 @@ export function validatedAction<S extends z.ZodType<any, any>, T>(
     if (!result.success) {
       return { error: result.error.errors[0].message } as T;
     }
-
     return action(result.data, formData);
   };
 }
@@ -39,9 +40,10 @@ export function validatedActionWithUser<S extends z.ZodType<any, any>, T>(
   action: ValidatedActionWithUserFunction<S, T>
 ) {
   return async (prevState: ActionState, formData: FormData): Promise<T> => {
-    const user = await getUser();
+    const session = await auth();
+    const user = session?.user;
     if (!user) {
-      throw new Error('User is not authenticated');
+      throw new Error("User is not authenticated");
     }
 
     const result = schema.safeParse(Object.fromEntries(formData));
@@ -60,14 +62,26 @@ type ActionWithTeamFunction<T> = (
 
 export function withTeam<T>(action: ActionWithTeamFunction<T>) {
   return async (formData: FormData): Promise<T> => {
-    const user = await getUser();
-    if (!user) {
-      redirect('/sign-in');
+    const session = await auth();
+    const user = session?.user;
+    if (!user?.id) {
+      redirect("/sign-in");
     }
-
-    const team = await getTeamForUser(user.id);
+    if (!user?.teamId) {
+      throw new Error("User is not part of a team");
+    }
+    const team = await db.team.findUnique({
+      where: { id: user.teamId },
+      include: {
+        members: {
+          include:{
+            user:true
+          }
+        }
+      },
+    });
     if (!team) {
-      throw new Error('Team not found');
+      throw new Error("Team not found");
     }
 
     return action(formData, team);
