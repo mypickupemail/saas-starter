@@ -1,3 +1,4 @@
+
 # Next.js SaaS Starter
 
 This is a starter template for building a SaaS application using **Next.js** with support for authentication, Stripe integration for payments, and a dashboard for logged-in users.
@@ -11,7 +12,7 @@ This is a starter template for building a SaaS application using **Next.js** wit
 - Dashboard pages with CRUD operations on users/teams
 - Basic RBAC with Owner and Member roles
 - Subscription management with Stripe Customer Portal
-- Email/password authentication with JWTs stored to cookies
+- Authentication with Next-auth (Email/Password + OAuth providers)
 - Global middleware to protect logged-in routes
 - Local middleware to protect Server Actions or validate Zod schemas
 - Activity logging system for any user events
@@ -20,7 +21,8 @@ This is a starter template for building a SaaS application using **Next.js** wit
 
 - **Framework**: [Next.js](https://nextjs.org/)
 - **Database**: [Postgres](https://www.postgresql.org/)
-- **ORM**: [Drizzle](https://orm.drizzle.team/)
+- **ORM**: [Prisma](https://www.prisma.io/)
+- **Authentication**: [Next-auth](https://next-auth.js.org/)
 - **Payments**: [Stripe](https://stripe.com/)
 - **UI Library**: [shadcn/ui](https://ui.shadcn.com/)
 
@@ -34,78 +36,94 @@ pnpm install
 
 ## Running Locally
 
-Use the included setup script to create your `.env` file:
-
+1. Copy the environment variables template:
 ```bash
-pnpm db:setup
+cp .env.example .env
 ```
 
-Then, run the database migrations and seed the database with a default user and team:
+2. Update the `.env` file with your:
+   - Database connection string
+   - Next-auth configuration (NEXTAUTH_SECRET, optional OAuth providers)
+   - Stripe keys
 
+3. Run database migrations:
 ```bash
-pnpm db:migrate
-pnpm db:seed
+npx prisma migrate dev
 ```
 
-This will create the following user and team:
+4. Seed the database with a default user and team:
+```bash
+npx prisma db seed
+```
 
+This will create:
 - User: `test@test.com`
 - Password: `admin123`
 
-You can, of course, create new users as well through `/sign-up`.
-
-Finally, run the Next.js development server:
-
+5. Start the development server:
 ```bash
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the app in action.
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-Optionally, you can listen for Stripe webhooks locally through their CLI to handle subscription change events:
-
+For Stripe webhooks during development:
 ```bash
 stripe listen --forward-to localhost:3000/api/stripe/webhook
 ```
 
+## Authentication Configuration
+
+The template comes pre-configured with:
+- Email/password authentication
+- Session management with JWT
+- Protected API routes using Next-auth middleware
+
+To enable OAuth providers:
+1. Add your credentials to `.env`
+```env
+GITHUB_CLIENT_ID=your_github_id
+GITHUB_CLIENT_SECRET=your_github_secret
+GOOGLE_CLIENT_ID=your_google_id
+GOOGLE_CLIENT_SECRET=your_google_secret
+```
+2. Update `src/auth/options.ts` to include the providers
+
 ## Testing Payments
 
-To test Stripe payments, use the following test card details:
+Use Stripe test card:
+- **Card**: `4242 4242 4242 4242`
+- **Date**: Any future date
+- **CVC**: Any 3 digits
 
-- Card Number: `4242 4242 4242 4242`
-- Expiration: Any future date
-- CVC: Any 3-digit number
+## Production Deployment
 
-## Going to Production
+### Vercel Deployment
+1. Push your code to a Git repository
+2. Connect to Vercel and deploy
+3. Add environment variables in Vercel settings:
+```env
+DATABASE_URL=your_production_db_url
+AUTH_SECRET=your_random_secret  # generate with: openssl rand -base64 32
+AUTH_URL=https://yourdomain.com
+STRIPE_SECRET_KEY=your_live_key
+```
 
-When you're ready to deploy your SaaS application to production, follow these steps:
+### Database Setup
+Create a production PostgreSQL database and connect it through Prisma:
+```bash
+npx prisma migrate deploy
+```
 
-### Set up a production Stripe webhook
+### Stripe Webhooks
+1. Create production webhook in Stripe Dashboard
+2. Set endpoint to: `https://yourdomain.com/api/stripe/webhook`
+3. Add webhook secret to `STRIPE_WEBHOOK_SECRET` in Vercel
 
-1. Go to the Stripe Dashboard and create a new webhook for your production environment.
-2. Set the endpoint URL to your production API route (e.g., `https://yourdomain.com/api/stripe/webhook`).
-3. Select the events you want to listen for (e.g., `checkout.session.completed`, `customer.subscription.updated`).
-
-### Deploy to Vercel
-
-1. Push your code to a GitHub repository.
-2. Connect your repository to [Vercel](https://vercel.com/) and deploy it.
-3. Follow the Vercel deployment process, which will guide you through setting up your project.
-
-### Add environment variables
-
-In your Vercel project settings (or during deployment), add all the necessary environment variables. Make sure to update the values for the production environment, including:
-
-1. `BASE_URL`: Set this to your production domain.
-2. `STRIPE_SECRET_KEY`: Use your Stripe secret key for the production environment.
-3. `STRIPE_WEBHOOK_SECRET`: Use the webhook secret from the production webhook you created in step 1.
-4. `POSTGRES_URL`: Set this to your production database URL.
-5. `AUTH_SECRET`: Set this to a random string. `openssl rand -base64 32` will generate one.
-
-## Other Templates
-
-While this template is intentionally minimal and to be used as a learning resource, there are other paid versions in the community which are more full-featured:
-
-- https://achromatic.dev
-- https://shipfa.st
-- https://makerkit.dev
+## Key Changes from Original
+- Replaced Drizzle ORM with Prisma migrations and schema
+- Switched custom JWT auth to Next-auth implementation
+- Updated database seed script to use Prisma client
+- Added Next-auth middleware for route protection
+- Simplified session management with built-in Next-auth methods
+ 
