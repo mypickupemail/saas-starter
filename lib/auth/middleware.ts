@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "./config";
 import db from "../db";
 import { TeamDataWithMembers } from "../db/schema";
-import { User } from "next-auth";
+import { User } from "@prisma/client";
 
 export type ActionState = {
   error?: string;
@@ -32,7 +32,9 @@ export function validatedAction<S extends z.ZodType<any, any>, T>(
 type ValidatedActionWithUserFunction<S extends z.ZodType<any, any>, T> = (
   data: z.infer<S>,
   formData: FormData,
-  user: User
+  user: User &{
+    teamId: string|undefined
+  }
 ) => Promise<T>;
 
 export function validatedActionWithUser<S extends z.ZodType<any, any>, T>(
@@ -50,8 +52,18 @@ export function validatedActionWithUser<S extends z.ZodType<any, any>, T>(
     if (!result.success) {
       return { error: result.error.errors[0].message } as T;
     }
-
-    return action(result.data, formData, user);
+    const dbuser = await db.user.findUnique({
+      where:{
+        id:user.id
+      }
+    })
+    if(!dbuser){
+      throw new Error("User is not authenticated")
+    }
+    return action(result.data, formData, {
+      ...dbuser , 
+      teamId: user.teamId!
+    });
   };
 }
 
