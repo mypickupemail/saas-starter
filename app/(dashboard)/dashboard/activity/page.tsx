@@ -12,7 +12,9 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { ActivityType } from '@/lib/db/schema';
-import { getActivityLogs } from '@/lib/db/queries';
+import db from '@/lib/db';
+import { auth } from '@/lib/auth/config';
+import { redirect } from 'next/navigation';
 
 const iconMap: Record<ActivityType, LucideIcon> = {
   [ActivityType.SIGN_UP]: UserPlus,
@@ -69,7 +71,21 @@ function formatAction(action: ActivityType): string {
 }
 
 export default async function ActivityPage() {
-  const logs = await getActivityLogs();
+  const session = await auth()
+  const user = session?.user
+  if (!user?.id) {
+    redirect('/sign-in')
+  }
+  const logs = await db.activityLog.findMany({
+    where: user?.teamId
+      ? {
+          userId: user.id,
+          teamId: user.teamId
+        }
+      : {
+          userId: user.id
+        }
+  });
 
   return (
     <section className="flex-1 p-4 lg:p-8">

@@ -127,3 +127,7 @@ npx prisma migrate deploy
 - Added Next-auth middleware for route protection
 - Simplified session management with built-in Next-auth methods
  
+
+
+ ## WIP
+ - [ ] update user context-> next-auth
