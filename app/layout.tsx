@@ -2,7 +2,7 @@ import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Manrope } from 'next/font/google';
 import { UserProvider } from '@/lib/auth';
-import { getUser } from '@/lib/db/queries';
+import { auth } from '@/lib/auth/config';
 
 export const metadata: Metadata = {
   title: 'Next.js SaaS Starter',
@@ -15,12 +15,12 @@ export const viewport: Viewport = {
 
 const manrope = Manrope({ subsets: ['latin'] });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  let userPromise = getUser();
+  let user =  auth().then((session) => session?.user);
 
   return (
     <html
@@ -28,7 +28,7 @@ export default function RootLayout({
       className={`bg-white dark:bg-gray-950 text-black dark:text-white ${manrope.className}`}
     >
       <body className="min-h-[100dvh] bg-gray-50">
-        <UserProvider userPromise={userPromise}>{children}</UserProvider>
+        <UserProvider userPromise={user}>{children}</UserProvider>
       </body>
     </html>
   );

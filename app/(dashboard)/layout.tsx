@@ -21,7 +21,7 @@ function Header() {
   const router = useRouter();
 
   async function handleSignOut() {
-    setUser(null);
+    setUser(undefined);
     await signOut();
     router.push('/');
   }
@@ -44,10 +44,10 @@ function Header() {
             <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
               <DropdownMenuTrigger>
                 <Avatar className="cursor-pointer size-9">
-                  <AvatarImage alt={user.name || ''} />
+                  <AvatarImage alt={user?.name || ''} />
                   <AvatarFallback>
-                    {user.email
-                      .split(' ')
+                    {user?.email
+                      ?.split(' ')
                       .map((n) => n[0])
                       .join('')}
                   </AvatarFallback>

@@ -1,11 +1,8 @@
 import Stripe from 'stripe';
 import { redirect } from 'next/navigation';
-import { Team } from '@/lib/db/schema';
-import {
-  getTeamByStripeCustomerId,
-  getUser,
-  updateTeamSubscription,
-} from '@/lib/db/queries';
+import { Team } from '@prisma/client';
+import { auth } from '../auth/config';
+import { getTeamByStripeCustomerId } from '../db/queries';
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-06-20',
@@ -18,9 +15,9 @@ export async function createCheckoutSession({
   team: Team | null;
   priceId: string;
 }) {
-  const user = await getUser();
-
-  if (!team || !user) {
+  const authSession = await auth();
+  const user = authSession?.user;
+  if (!team || !user?.id) {
     redirect(`/sign-up?redirect=checkout&priceId=${priceId}`);
   }
 

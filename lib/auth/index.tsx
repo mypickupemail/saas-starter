@@ -1,5 +1,6 @@
 'use client';
 
+import { User } from 'next-auth';
 import {
   createContext,
   useContext,
@@ -8,11 +9,10 @@ import {
   useEffect,
 } from 'react';
 import { use } from 'react';
-import { User } from '@/lib/db/schema';
 
 type UserContextType = {
-  user: User | null;
-  setUser: (user: User | null) => void;
+  user: User | undefined; 
+  setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
 };
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -30,10 +30,10 @@ export function UserProvider({
   userPromise,
 }: {
   children: ReactNode;
-  userPromise: Promise<User | null>;
+  userPromise: Promise<User | undefined>;
 }) {
   let initialUser = use(userPromise);
-  let [user, setUser] = useState<User | null>(initialUser);
+  let [user, setUser] = useState<User | undefined>(initialUser);
 
   useEffect(() => {
     setUser(initialUser);
