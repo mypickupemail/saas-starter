@@ -3,7 +3,7 @@ import {auth} from '@/lib/auth/base'
 
 const protectedRoutes = '/dashboard';
 
-export default auth((request)=>{
+export const middleware =  auth((request)=>{
   const { pathname } = request.nextUrl;
   const user = request.auth?.user
   const isProtectedRoute = pathname.startsWith(protectedRoutes);
