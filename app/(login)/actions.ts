@@ -16,7 +16,7 @@ import {auth,
 import { comparePasswords, hashPassword } from '@/lib/auth/password_utils';
 import { Prisma, Team } from '@prisma/client';
 
-async function logActivity(
+export async function logActivity(
   teamId: string | null | undefined,
   userId: string,
   type: ActivityType,

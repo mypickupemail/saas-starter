@@ -130,4 +130,5 @@ npx prisma migrate deploy
 
 
  ## WIP
- - [ ] update user context-> next-auth
+ - [x] update user context-> next-auth
+ - [ ] update 3rd oauth login -> invite/newUser logic 

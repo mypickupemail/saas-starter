@@ -10,8 +10,7 @@ declare module "next-auth" {
       role: "owner" | "member" | string
     } & DefaultSession["user"];
   }
- 
-}
+} 
 
 export const AuthConfig = {
   session: {
