@@ -2,7 +2,7 @@ import Stripe from 'stripe';
 import { redirect } from 'next/navigation';
 import { Team } from '@prisma/client';
 import { auth } from '../auth/config';
-import { getTeamByStripeCustomerId } from '../db/queries';
+import { getTeamByStripeCustomerId, updateTeamSubscription } from '../db/queries';
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-06-20',

@@ -131,14 +131,29 @@
 import db from './index'
 
 export async function getTeamByStripeCustomerId(customerId: string) {
-  const result = await db.team.count({
+  const result = await db.team.findFirst({
     where:{
       stripeCustomerId:customerId
     }
   })
-  return result > 0 
+  return result 
 }
 
 //TODO updateTeamSubscription to prisma
-
+export async function updateTeamSubscription(
+  teamId: string,
+  subscriptionData: {
+    stripeSubscriptionId: string | null;
+    stripeProductId: string | null;
+    planName: string | null;
+    subscriptionStatus: string;
+  }
+) {
+  await db.team.update({
+    where:{
+      id:teamId
+    },
+    data:subscriptionData
+  }) 
+}
 //TODO updateTeamSubscription to prisma
