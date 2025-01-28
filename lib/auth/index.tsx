@@ -1,6 +1,6 @@
 'use client';
 
-import { User } from 'next-auth';
+import { Session } from 'next-auth';
 import {
   createContext,
   useContext,
@@ -9,7 +9,7 @@ import {
   useEffect,
 } from 'react';
 import { use } from 'react';
-
+type User = Session['user']
 type UserContextType = {
   user: User | undefined; 
   setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
@@ -40,7 +40,7 @@ export function UserProvider({
   }, [initialUser]);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user , setUser }}>
       {children}
     </UserContext.Provider>
   );
