@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { comparePasswords, hashPassword } from "./password_utils";
+import { comparePasswords } from "./password_utils";
 import db from "@/lib/db";
 import { PrismaAdapter } from "./PrismaAdapter";
 import Google from "next-auth/providers/google";
@@ -25,7 +25,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new Error("Email and password must be strings.");
         }
         const hasTeam = !!credentials.teamId && typeof credentials.teamId === "string";
-        let user = await db.user.findFirst({
+        const user = await db.user.findFirst({
           where: {
             email: credentials.email
           },

@@ -32,8 +32,8 @@ export function UserProvider({
   children: ReactNode;
   userPromise: Promise<User | undefined>;
 }) {
-  let initialUser = use(userPromise);
-  let [user, setUser] = useState<User | undefined>(initialUser);
+  const initialUser = use(userPromise);
+  const [user, setUser] = useState<User | undefined>(initialUser);
 
   useEffect(() => {
     setUser(initialUser);
