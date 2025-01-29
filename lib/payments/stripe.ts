@@ -2,7 +2,8 @@ import Stripe from 'stripe';
 import { redirect } from 'next/navigation';
 import { Team } from '@prisma/client';
 import { auth } from '../auth/config';
-import { getTeamByStripeCustomerId, updateTeamSubscription } from '../db/queries';
+import { getTeamByStripeCustomerId,  updateTeamSubscription } from '../db/queries';
+import db from '../db';
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-06-20',
@@ -16,9 +17,18 @@ export async function createCheckoutSession({
   priceId: string;
 }) {
   const authSession = await auth();
-  const user = authSession?.user;
-  if (!team || !user?.id) {
+  if (!team || !authSession?.user?.email) {
     redirect(`/sign-up?redirect=checkout&priceId=${priceId}`);
+  }
+  
+  const user = await db.user.findUnique({
+    where:{
+      email:authSession?.user?.email
+    }
+  })
+  if(!user){
+    redirect(`/sign-up?redirect=checkout&priceId=${priceId}`);
+    
   }
 
   const session = await stripe.checkout.sessions.create({
@@ -114,20 +124,19 @@ export async function handleSubscriptionChange(
   const customerId = subscription.customer as string;
   const subscriptionId = subscription.id;
   const status = subscription.status;
-
   const team = await getTeamByStripeCustomerId(customerId);
 
   if (!team) {
     console.error('Team not found for Stripe customer:', customerId);
     return;
   }
-
   if (status === 'active' || status === 'trialing') {
     const plan = subscription.items.data[0]?.plan;
+    const product =await stripe.products.retrieve(plan?.product as string);
     await updateTeamSubscription(team.id, {
       stripeSubscriptionId: subscriptionId,
       stripeProductId: plan?.product as string,
-      planName: (plan?.product as Stripe.Product).name,
+      planName: product.name,
       subscriptionStatus: status,
     });
   } else if (status === 'canceled' || status === 'unpaid') {

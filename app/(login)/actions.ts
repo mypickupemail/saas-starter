@@ -14,27 +14,8 @@ import {auth,
   signOut as signOutService,
   signIn as signInService} from '@/lib/auth/config';
 import { comparePasswords, hashPassword } from '@/lib/auth/password_utils';
-import { Prisma, Team } from '@prisma/client';
-
-export async function logActivity(
-  teamId: string | null | undefined,
-  userId: string,
-  type: ActivityType,
-  ipAddress?: string,
-) {
-  if (!teamId) {
-    return;
-  }
-  const newActivity = {
-    teamId,
-    userId,
-    action: type,
-    ipAddress: ipAddress || '',
-  };
-  await db.activityLog.create({
-    data: newActivity
-  })
-}
+import {  Team } from '@prisma/client';
+import { logActivity } from '@/lib/db/queries';
 
 const signInSchema = z.object({
   email: z.string().email().min(3).max(255),
@@ -42,18 +23,21 @@ const signInSchema = z.object({
 });
 
 export const signIn = validatedAction(signInSchema, async (data,formData) => {
-  const { email, password } = data;
+  const { email, password  } = data;
+  
   try {
-    await signInService("credentials",formData);
-    redirect('/dashboard');
-    
-  } catch (error) {
+    await signInService("credentials",{
+      ...Object.fromEntries(formData),
+      redirect:false 
+    })
+  } catch (_err) {
     return {
       error: 'Failed to create user. Please try again.',
       email,
       password,
-    };
+    }
   }
+  redirect( formData.get("redirectTo")?.toString() ?? "/dashboard")
 
 });
 

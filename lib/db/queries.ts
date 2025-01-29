@@ -129,6 +129,7 @@
 // }
 
 import db from './index'
+import { ActivityType } from './schema';
 
 export async function getTeamByStripeCustomerId(customerId: string) {
   const result = await db.team.findFirst({
@@ -139,7 +140,6 @@ export async function getTeamByStripeCustomerId(customerId: string) {
   return result 
 }
 
-//TODO updateTeamSubscription to prisma
 export async function updateTeamSubscription(
   teamId: string,
   subscriptionData: {
@@ -156,4 +156,31 @@ export async function updateTeamSubscription(
     data:subscriptionData
   }) 
 }
-//TODO updateTeamSubscription to prisma
+
+/**
+ * log an activity
+ * @param teamId 
+ * @param userId 
+ * @param type 
+ * @param ipAddress 
+ * @returns 
+ */
+export async function logActivity(
+  teamId: string | null | undefined,
+  userId: string,
+  type: ActivityType,
+  ipAddress?: string,
+) {
+  if (!teamId) {
+    return;
+  }
+  const newActivity = {
+    teamId,
+    userId,
+    action: type,
+    ipAddress: ipAddress || '',
+  };
+  await db.activityLog.create({
+    data: newActivity
+  })
+}

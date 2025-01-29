@@ -6,7 +6,7 @@ declare module "next-auth" {
    */
   interface Session {
     user: {
-      teamId?: string;
+      teamId: string|null;
       role: "owner" | "member" | string
     } & DefaultSession["user"];
   }
@@ -23,18 +23,24 @@ export const AuthConfig = {
         ...session,
         user: {
           ...session.user,
+          id:token.sub,
           teamId:token.teamId,
           role: token.role
         },
       }
     },
     jwt({ token, user }) {
-      return {
-        ...token,
-        teamId: ('teamId' in user && typeof user.teamId==='string')? user.teamId : null ,
-        role: ('role' in user && typeof user.role==='string')? user.role : null 
+      if(user){
+        return {
+          ...token,
+          teamId: ('teamId' in user && typeof user.teamId==='string')? user.teamId : null ,
+          role: ('role' in user && typeof user.role==='string')? user.role : null 
+        }
+
       }
+      return token
     }
   },
 } satisfies NextAuthConfig;
 export const { auth } = NextAuth(AuthConfig);
+ 

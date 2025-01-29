@@ -6,7 +6,7 @@ import { auth } from '@/lib/auth/base';
 
 export const metadata: Metadata = {
   title: 'Next.js SaaS Starter',
-  description: 'Get started quickly with Next.js, Postgres, and Stripe.',
+  description: 'Get started quickly with Next.js, Postgres(Prisma), and Stripe.',
 };
 
 export const viewport: Viewport = {
@@ -20,7 +20,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let user =  auth().then((session) => session?.user)
+  const user =  auth().then((session) => session?.user)
   return (
     <html
       lang="en"

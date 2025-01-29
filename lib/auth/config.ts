@@ -57,7 +57,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         
         return {
           ...user,
-          teamId,
+          teamId: teamId??user.teamMembers[0].teamId
         };
       },
     }),

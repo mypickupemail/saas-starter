@@ -73,7 +73,7 @@ function formatAction(action: ActivityType): string {
 export default async function ActivityPage() {
   const session = await auth()
   const user = session?.user
-  if (!user?.id) {
+  if (!user?.email) {
     redirect('/sign-in')
   }
   const logs = await db.activityLog.findMany({

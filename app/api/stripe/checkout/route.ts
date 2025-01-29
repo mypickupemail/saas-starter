@@ -9,7 +9,6 @@ export async function GET(request: NextRequest) {
   if (!sessionId) {
     return NextResponse.redirect(new URL("/pricing", request.url));
   }
-
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
       expand: ["customer", "subscription"],
@@ -32,7 +31,6 @@ export async function GET(request: NextRequest) {
     const subscription = await stripe.subscriptions.retrieve(subscriptionId, {
       expand: ["items.data.price.product"],
     });
-
     const plan = subscription.items.data[0]?.price;
 
     if (!plan) {
@@ -40,7 +38,6 @@ export async function GET(request: NextRequest) {
     }
 
     const productId = (plan.product as Stripe.Product).id;
-
     if (!productId) {
       throw new Error("No product ID found for this subscription.");
     }
@@ -53,19 +50,19 @@ export async function GET(request: NextRequest) {
       where: { id: userId },
     });
 
-
     if (!user) {
       throw new Error("User not found in database.");
     }
-    const team = await db.teamMember.findFirst({
+    const teamMember = await db.teamMember.findFirst({
       where: {
         userId: user.id,
       },
     });
 
-    if (!team) {
+    if (!teamMember) {
       throw new Error("User is not associated with any team.");
     }
+
     await db.team.update({
       data: {
         stripeCustomerId: customerId,
@@ -75,7 +72,7 @@ export async function GET(request: NextRequest) {
         subscriptionStatus: subscription.status
       },
       where: {
-        id: team.id,
+        id: teamMember.teamId,
       },
     });
     return NextResponse.redirect(new URL("/dashboard", request.url));
