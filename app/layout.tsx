@@ -2,7 +2,7 @@ import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Manrope } from 'next/font/google';
 import { UserProvider } from '@/lib/auth';
-import { auth } from '@/lib/auth/config';
+import { auth } from '@/lib/auth/base';
 
 export const metadata: Metadata = {
   title: 'Next.js SaaS Starter',
@@ -20,8 +20,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let user =  auth().then((session) => session?.user);
-
+  let user =  auth().then((session) => session?.user)
   return (
     <html
       lang="en"

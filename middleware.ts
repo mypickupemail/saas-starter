@@ -11,6 +11,7 @@ export const middleware =  auth((request)=>{
   if (isProtectedRoute && !user) {
     return NextResponse.redirect(new URL('/sign-in', request.url));
   }
+
 })
 
 export const config = {

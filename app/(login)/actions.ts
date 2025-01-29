@@ -22,7 +22,7 @@ export async function logActivity(
   type: ActivityType,
   ipAddress?: string,
 ) {
-  if (teamId === null || teamId === undefined) {
+  if (!teamId) {
     return;
   }
   const newActivity = {
@@ -164,9 +164,7 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
         role: userRole,
       }
     }),
- //   db.insert(teamMembers).values(newTeamMember),
     logActivity(teamId, createdUser.id, ActivityType.SIGN_UP),
-    //setSession(createdUser),
     signInService("credentials",{
       email,
       password,
@@ -399,3 +397,8 @@ export const inviteTeamMember = validatedActionWithUser(
     return { success: 'Invitation sent successfully' };
   },
 );
+
+
+export async function oauthSignIn(){
+  return signInService("google")
+}

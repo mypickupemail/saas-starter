@@ -53,11 +53,6 @@ export async function GET(request: NextRequest) {
       where: { id: userId },
     });
 
-    // const user = await db
-    //   .select()
-    //   .from(users)
-    //   .where(eq(users.id, Number(userId)))
-    //   .limit(1);
 
     if (!user) {
       throw new Error("User not found in database.");
@@ -77,8 +72,7 @@ export async function GET(request: NextRequest) {
         stripeSubscriptionId: subscriptionId,
         stripeProductId: productId,
         planName: (plan.product as Stripe.Product).name,
-        subscriptionStatus: subscription.status,
-        updatedAt: new Date(),
+        subscriptionStatus: subscription.status
       },
       where: {
         id: team.id,
