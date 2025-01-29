@@ -5,6 +5,24 @@ This is a starter template for building a SaaS application using **Next.js** wit
 
 **Demo: [https://next-saas-start.vercel.app/](https://next-saas-start.vercel.app/)**
 
+
+## 🚀 Project Refactor and Upgrade 
+
+### 🔐 Integration of `auth.js` for Authentication
+- **Seamless Login Experience**: By integrating `auth.js`, we have implemented a more natural and intuitive login flow. Users can now easily log in using third-party providers (e.g., Google, GitHub), significantly improving the user experience.
+- **Multiple Authentication Methods**: `auth.js` offers flexible authentication mechanisms, supporting OAuth, Email/Password, and more, catering to diverse user needs.
+
+### 🗄️ Adoption of `Prisma` as the ORM Tool
+- **Multi-Database Support**: With the introduction of `Prisma`, the project now supports both `SQLite` and `PostgreSQL`, allowing developers to choose the database that best fits their requirements.
+- **Type-Safe Database Operations**: `Prisma` provides robust type safety, reducing errors in database operations and boosting development efficiency.
+- **Simplified Database Migrations**: `Prisma`'s migration tools make database schema changes more straightforward and manageable.
+
+### 🧩 Optimized Code Structure and Logic
+- **Clearer Code Responsibilities**: We have reorganized the codebase to ensure each module and function has a clear and single responsibility, making the code easier to understand and maintain.
+- **Simplified Complex Logic**: Through refactoring, we have streamlined complex business logic, resulting in cleaner and more extensible code.
+- **Improved Readability**: The readability of the code has been significantly enhanced, allowing new developers to onboard and contribute more quickly.
+ 
+
 ## Features
 
 - Marketing landing page (`/`) with animated Terminal element
