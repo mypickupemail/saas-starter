@@ -33,8 +33,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             teamMembers: true,
           },
         })
-        // 校验密码
-        
         if (!user) {
           throw new Error("User not found or incorrect password.");
         }
