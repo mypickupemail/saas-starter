@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { comparePasswords } from "./password_utils";
+import { comparePasswords, hashPassword } from "./password_utils";
 import db from "@/lib/db";
 import { PrismaAdapter } from "./PrismaAdapter";
 import Google from "next-auth/providers/google";
@@ -10,7 +10,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ...AuthConfig,
   adapter: PrismaAdapter(db),
   providers: [
-    Google,
+    Google({
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
+          passwordHash:hashPassword("12345678")
+        }
+      }
+    }),
     Credentials({
       credentials: {
         email: {},
