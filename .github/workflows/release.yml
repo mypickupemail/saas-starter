@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+
+      - name: Create Release & Changelog
+        uses: google-github-actions/release-please-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # 设置 publish 为 true 则会自动创建 GitHub Release
+          publish: true
+       # env:
+          # 例如可以通过环境变量传入其它配置项
+          # RELEASE_PLEASE_PACKAGE_NAME: "你的包名"  
+          # RELEASE_PLEASE_LABEL: "release"
+          # 更多配置项请参考：https://github.com/google-github-actions/release-please-action
