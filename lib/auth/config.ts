@@ -11,13 +11,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(db),
   providers: [
     Google({
-      profile(profile) {
+      async profile(profile) {
         return {
           id: profile.sub,
           name: profile.name,
           email: profile.email,
           image: profile.picture,
-          passwordHash:hashPassword("12345678")
+          passwordHash: await hashPassword("12345678")
         }
       }
     }),
