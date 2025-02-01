@@ -9,6 +9,7 @@ import { TeamDataWithMembers } from '@/lib/db/schema';
 import { removeTeamMember } from '@/app/(login)/actions';
 import { InviteTeamMember } from './invite-team';
 import { User } from '@prisma/client';
+import { useTranslations } from 'next-intl';
 
 type ActionState = {
   error?: string;
@@ -16,7 +17,8 @@ type ActionState = {
 };
 
 export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
-  const [removeState, removeAction, isRemovePending] = useActionState<
+  const t = useTranslations('Dashboard.settings');
+  const [_removeState, removeAction, isRemovePending] = useActionState<
     ActionState,
     FormData
   >(removeTeamMember, { error: '', success: '' });
@@ -27,29 +29,29 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
 
   return (
     <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium mb-6">Team Settings</h1>
+      <h1 className="text-lg lg:text-2xl font-medium mb-6">{t('title')}</h1>
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Team Subscription</CardTitle>
+          <CardTitle>{t('subscription.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
               <div className="mb-4 sm:mb-0">
                 <p className="font-medium">
-                  Current Plan: {teamData.planName || 'Free'}
+                  {t('subscription.currentPlan')}: {teamData.planName || 'Free'}
                 </p>
                 <p className="text-sm text-muted-foreground">
                   {teamData.subscriptionStatus === 'active'
-                    ? 'Billed monthly'
+                    ? t('subscription.billedMonthly')
                     : teamData.subscriptionStatus === 'trialing'
-                      ? 'Trial period'
-                      : 'No active subscription'}
+                      ? t('subscription.trialPeriod')
+                      : t('subscription.noSubscription')}
                 </p>
               </div>
               <form action={customerPortalAction}>
                 <Button type="submit" variant="outline">
-                  Manage Subscription
+                  {t('subscription.manageButton')}
                 </Button>
               </form>
             </div>
@@ -58,7 +60,7 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
       </Card>
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Team Members</CardTitle>
+          <CardTitle>{t('teamMembers.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="space-y-4">
@@ -82,7 +84,7 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
                       {getUserDisplayName(member.user)}
                     </p>
                     <p className="text-sm text-muted-foreground capitalize">
-                      {member.role}
+                      {t('teamMembers.role')}
                     </p>
                   </div>
                 </div>
@@ -95,19 +97,16 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
                       size="sm"
                       disabled={isRemovePending}
                     >
-                      {isRemovePending ? 'Removing...' : 'Remove'}
+                      {isRemovePending ? t('teamMembers.removingButton') : t('teamMembers.removeButton')}
                     </Button>
                   </form>
                 ) : null}
               </li>
             ))}
           </ul>
-          {removeState?.error && (
-            <p className="text-red-500 mt-4">{removeState.error}</p>
-          )}
+          <InviteTeamMember  />
         </CardContent>
       </Card>
-      <InviteTeamMember />
     </section>
   );
 }

@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CreditCard, Database } from "lucide-react";
 import { Terminal } from "./terminal";
+import { useTranslations } from 'next-intl';
 
 export default function HomePage() {
+  const t = useTranslations('HomePage');
+
   return (
     <main>
       <section className="py-20">
@@ -10,13 +13,11 @@ export default function HomePage() {
           <div className="lg:grid lg:grid-cols-12 lg:gap-8">
             <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
               <h1 className="text-4xl font-bold text-gray-900 tracking-tight sm:text-5xl md:text-6xl">
-                Build Your SaaS
-                <span className="block text-orange-500">Faster Than Ever</span>
+                {t('title')}
+                <span className="block text-orange-500">{t('subtitle')}</span>
               </h1>
               <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                Launch your SaaS product in record time with our powerful,
-                ready-to-use template. Packed with modern technologies and
-                essential integrations.
+                {t('description')}
               </p>
               <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
                 <a
@@ -24,7 +25,7 @@ export default function HomePage() {
                   target="_blank"
                 >
                   <Button className="bg-white hover:bg-gray-100 text-black border border-gray-200 rounded-full text-lg px-8 py-4 inline-flex items-center justify-center">
-                    Deploy your own
+                    {t('deployButton')}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </a>
@@ -50,42 +51,37 @@ export default function HomePage() {
                 </svg>
               </div>
               <div className="mt-5">
-                <h2 className="text-lg font-medium text-gray-900">
-                  Next.js and React
-                </h2>
+                <h3 className="text-lg font-medium text-gray-900">
+                  {t('features.nextjs.title')}
+                </h3>
                 <p className="mt-2 text-base text-gray-500">
-                  Leverage the power of modern web technologies for optimal
-                  performance and developer experience.
+                  {t('features.nextjs.description')}
                 </p>
               </div>
             </div>
-
-            <div className="mt-10 lg:mt-0">
+            <div>
               <div className="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white">
                 <Database className="h-6 w-6" />
               </div>
               <div className="mt-5">
-                <h2 className="text-lg font-medium text-gray-900">
-                  Postgres and Prisma ORM
-                </h2>
+                <h3 className="text-lg font-medium text-gray-900">
+                  {t('features.database.title')}
+                </h3>
                 <p className="mt-2 text-base text-gray-500">
-                  Robust database solution with an intuitive ORM for efficient
-                  data management and scalability.
+                  {t('features.database.description')}
                 </p>
               </div>
             </div>
-
-            <div className="mt-10 lg:mt-0">
+            <div>
               <div className="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white">
                 <CreditCard className="h-6 w-6" />
               </div>
               <div className="mt-5">
-                <h2 className="text-lg font-medium text-gray-900">
-                  Stripe Integration
-                </h2>
+                <h3 className="text-lg font-medium text-gray-900">
+                  {t('features.stripe.title')}
+                </h3>
                 <p className="mt-2 text-base text-gray-500">
-                  Seamless payment processing and subscription management with
-                  industry-leading Stripe integration.
+                  {t('features.stripe.description')}
                 </p>
               </div>
             </div>
@@ -98,21 +94,19 @@ export default function HomePage() {
           <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
             <div>
               <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-                Ready to launch your SaaS?
+                {t('callToAction.title')}
               </h2>
               <p className="mt-3 max-w-3xl text-lg text-gray-500">
-                Our template provides everything you need to get your SaaS up
-                and running quickly. Don&apos;t waste time on boilerplate - focus on
-                what makes your product unique.
+                {t('callToAction.description')}
               </p>
             </div>
             <div className="mt-8 lg:mt-0 flex justify-center lg:justify-end">
               <a
-                href="https://github.com/liuhuapiaoyuan/saas-starter"
+                href="https://github.com/vercel/nextjs-subscription-payments"
                 target="_blank"
               >
                 <Button className="bg-white hover:bg-gray-100 text-black border border-gray-200 rounded-full text-xl px-12 py-6 inline-flex items-center justify-center">
-                  View the code
+                  {t('callToAction.button')}
                   <ArrowRight className="ml-3 h-6 w-6" />
                 </Button>
               </a>

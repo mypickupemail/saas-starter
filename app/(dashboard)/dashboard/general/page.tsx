@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
 import { useUser } from '@/lib/auth';
 import { updateAccount } from '@/app/(login)/actions';
+import { useTranslations } from 'next-intl';
 
 type ActionState = {
   error?: string;
@@ -16,6 +17,9 @@ type ActionState = {
 
 export default function GeneralPage() {
   const { user } = useUser();
+  const t = useTranslations('Dashboard.general');
+  const account = useTranslations('Dashboard.general.account');
+
   const [state, formAction, isPending] = useActionState<ActionState, FormData>(
     updateAccount,
     { error: '', success: '' }
@@ -38,32 +42,32 @@ export default function GeneralPage() {
   return (
     <section className="flex-1 p-4 lg:p-8">
       <h1 className="text-lg lg:text-2xl font-medium text-gray-900 mb-6">
-        General Settings
+        {t('title')}
       </h1>
 
       <Card>
         <CardHeader>
-          <CardTitle>Account Information</CardTitle>
+          <CardTitle>{account('title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">{account('name')}</Label>
               <Input
                 id="name"
                 name="name"
-                placeholder="Enter your name"
+                placeholder={account('namePlaceholder')}
                 defaultValue={user?.name || ''}
                 required
               />
             </div>
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{account('email')}</Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder={account('emailPlaceholder')}
                 defaultValue={user?.email || ''}
                 required
               />
@@ -82,10 +86,10 @@ export default function GeneralPage() {
               {isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
+                  {account('saving')}
                 </>
               ) : (
-                'Save Changes'
+                account('button')
               )}
             </Button>
           </form>

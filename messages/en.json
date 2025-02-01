@@ -1,0 +1,131 @@
+{
+  "Metadata": {
+    "title": "Next.js SaaS Starter",
+    "description": "Get started quickly with Next.js, Postgres(Prisma), and Stripe."
+  },
+  "HomePage": {
+    "title": "Build Your SaaS",
+    "subtitle": "Faster Than Ever",
+    "description": "Launch your SaaS product in record time with our powerful, ready-to-use template. Packed with modern technologies and essential integrations.",
+    "deployButton": "Deploy your own",
+    "features": {
+      "title": "Features",
+      "description": "Everything you need to build your SaaS product",
+      "nextjs": {
+        "title": "Next.js and React",
+        "description": "Leverage the power of modern web technologies for optimal performance and developer experience."
+      },
+      "database": {
+        "title": "Postgres and Prisma ORM",
+        "description": "Robust database solution with an intuitive ORM for efficient data management and scalability."
+      },
+      "stripe": {
+        "title": "Stripe Integration",
+        "description": "Seamless payment processing and subscription management with industry-leading Stripe integration."
+      }
+    },
+    "callToAction": {
+      "title": "Ready to launch your SaaS?",
+      "description": "Our template provides everything you need to get your SaaS up and running quickly. Don't waste time on boilerplate - focus on what makes your product unique.",
+      "button": "View the code"
+    },
+    "about": "Go to the about page"
+  },
+  "Layout": {
+    "header": {
+      "pricing": "Pricing",
+      "dashboard": "Dashboard",
+      "signOut": "Sign out",
+      "signUp": "Sign Up"
+    }
+  },
+  "Auth": {
+    "signin": {
+      "title": "Sign in to your account",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "button": "Sign in",
+      "loading": "Loading...",
+      "orContinueWith": "Or continue with",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Sign up"
+    },
+    "signup": {
+      "title": "Create your account",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "button": "Sign up",
+      "loading": "Loading...",
+      "orContinueWith": "Or continue with",
+      "haveAccount": "Already have an account?",
+      "signInLink": "Sign in"
+    }
+  },
+  "Dashboard": {
+    "layout": {
+      "settings": "Settings",
+      "toggleSidebar": "Toggle sidebar",
+      "nav": {
+        "team": "Team",
+        "general": "General",
+        "activity": "Activity",
+        "security": "Security"
+      }
+    },
+    "general": {
+      "title": "General Settings",
+      "account": {
+        "title": "Account Information",
+        "name": "Name",
+        "namePlaceholder": "Enter your name",
+        "email": "Email",
+        "emailPlaceholder": "Enter your email",
+        "button": "Save Changes",
+        "saving": "Saving..."
+      }
+    },
+    "security": {
+      "title": "Security Settings",
+      "password": {
+        "title": "Password",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm New Password",
+        "button": "Update Password",
+        "updating": "Updating..."
+      },
+      "deleteAccount": {
+        "title": "Delete Account",
+        "description": "Account deletion is non-reversable. Please proceed with caution.",
+        "confirmPassword": "Confirm Password",
+        "button": "Delete Account",
+        "deleting": "Deleting..."
+      }
+    },
+    "settings": {
+      "title": "Team Settings",
+      "subscription": {
+        "title": "Team Subscription",
+        "currentPlan": "Current Plan",
+        "billedMonthly": "Billed monthly",
+        "trialPeriod": "Trial period",
+        "noSubscription": "No active subscription",
+        "manageButton": "Manage Subscription"
+      },
+      "teamMembers": {
+        "title": "Team Members",
+        "role": "Role",
+        "removeButton": "Remove",
+        "removingButton": "Removing..."
+      },
+      "errors": {
+        "noTeam": "User is not part of a team",
+        "teamNotFound": "Team not found"
+      }
+    }
+  }
+}
