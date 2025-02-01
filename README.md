@@ -21,6 +21,9 @@ This is a starter template for building a SaaS application using **Next.js** wit
 - **Clearer Code Responsibilities**: We have reorganized the codebase to ensure each module and function has a clear and single responsibility, making the code easier to understand and maintain.
 - **Simplified Complex Logic**: Through refactoring, we have streamlined complex business logic, resulting in cleaner and more extensible code.
 - **Improved Readability**: The readability of the code has been significantly enhanced, allowing new developers to onboard and contribute more quickly.
+
+### i18n 
+- Integrated i18n for localized messages, allowing users to switch languages at runtime.
  
 
 ## Features
