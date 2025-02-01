@@ -139,12 +139,22 @@ export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
               )}
             </Link>
           </div>
+          <div className="relative mt-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-gray-50 text-gray-500">
+                {t('orContinueWith')}
+              </span>
+            </div>
+          </div>
           <div className="mt-6">
             <form
               action={oauthSignIn}
             >
               <SubmitButton className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
-                {t('orContinueWith')} Google
+              Google
               </SubmitButton>
             </form>
           </div>

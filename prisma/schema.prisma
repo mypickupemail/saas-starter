@@ -1,6 +1,6 @@
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL") // 使用环境变量来配置数据库连接
+  url      = env("DATABASE_URL") 
 }
 
 generator client {
@@ -15,7 +15,7 @@ model ActivityLog {
   userId    String?
   action    String
   timestamp DateTime @default(now())
-  ipAddress String?  @db.Inet // PostgreSQL 支持 IP 地址类型
+  ipAddress String?  @db.VarChar(255) 
 
   @@map("activity_logs")
 }
