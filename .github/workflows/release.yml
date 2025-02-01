@@ -21,10 +21,6 @@ jobs:
         uses: google-github-actions/release-please-action@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          # 设置 publish 为 true 则会自动创建 GitHub Release
-          publish: true
-       # env:
-          # 例如可以通过环境变量传入其它配置项
-          # RELEASE_PLEASE_PACKAGE_NAME: "你的包名"  
-          # RELEASE_PLEASE_LABEL: "release"
-          # 更多配置项请参考：https://github.com/google-github-actions/release-please-action
+          release-type: node
+          package-name: "saas-starter"
+          changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"docs","section":"Documentation","hidden":false},{"type":"style","section":"Styles","hidden":false},{"type":"refactor","section":"Code Refactoring","hidden":false},{"type":"perf","section":"Performance Improvements","hidden":false},{"type":"test","section":"Tests","hidden":false},{"type":"build","section":"Build System","hidden":false},{"type":"ci","section":"Continuous Integration","hidden":false}]'
