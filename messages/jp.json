@@ -1,0 +1,149 @@
+{
+  "Metadata": {
+    "title": "Next.js SaaS スターター",
+    "description": "Next.js、Postgres(Prisma)、Stripeですぐに始められます。"
+  },
+  "HomePage": {
+    "title": "SaaSを構築",
+    "subtitle": "かつてないほど速く",
+    "description": "パワフルですぐに使える当社のテンプレートで、記録的な速さでSaaS製品を立ち上げましょう。最新のテクノロジーと必須の統合機能を搭載。",
+    "deployButton": "デプロイする",
+    "features": {
+      "title": "機能",
+      "description": "SaaS製品を構築するために必要なすべて",
+      "nextjs": {
+        "title": "Next.jsとReact",
+        "description": "最適なパフォーマンスと開発者体験を実現する最新のウェブテクノロジーを活用。"
+      },
+      "database": {
+        "title": "PostgresとPrisma ORM",
+        "description": "効率的なデータ管理とスケーラビリティを実現する直感的なORMを備えた堅牢なデータベースソリューション。"
+      },
+      "stripe": {
+        "title": "Stripe統合",
+        "description": "業界をリードするStripeとのシームレスな決済処理とサブスクリプション管理。"
+      }
+    },
+    "callToAction": {
+      "title": "SaaSの立ち上げ準備はできていますか？",
+      "description": "当社のテンプレートは、SaaSをすぐに立ち上げて実行するために必要なすべてを提供します。ボイラープレートに時間を費やさず、製品の独自性に集中しましょう。",
+      "button": "コードを見る"
+    }
+  },
+  "Layout": {
+    "header": {
+      "pricing": "料金",
+      "dashboard": "ダッシュボード",
+      "signOut": "ログアウト",
+      "signUp": "登録"
+    }
+  },
+  "Auth": {
+    "signin": {
+      "title": "アカウントにログイン",
+      "email": "メールアドレス",
+      "emailPlaceholder": "メールアドレスを入力",
+      "password": "パスワード",
+      "passwordPlaceholder": "パスワードを入力",
+      "button": "ログイン",
+      "loading": "読み込み中...",
+      "orContinueWith": "または次で続行",
+      "noAccount": "アカウントをお持ちでない方",
+      "signUpLink": "登録"
+    },
+    "signup": {
+      "title": "アカウントを作成",
+      "email": "メールアドレス",
+      "emailPlaceholder": "メールアドレスを入力",
+      "password": "パスワード",
+      "passwordPlaceholder": "パスワードを入力",
+      "button": "登録",
+      "loading": "読み込み中...",
+      "orContinueWith": "または次で続行",
+      "haveAccount": "すでにアカウントをお持ちの方",
+      "signInLink": "ログイン"
+    }
+  },
+  "Dashboard": {
+    "layout": {
+      "settings": "設定",
+      "toggleSidebar": "サイドバーの切り替え",
+      "nav": {
+        "team": "チーム",
+        "general": "一般",
+        "activity": "アクティビティ",
+        "security": "セキュリティ"
+      }
+    },
+    "general": {
+      "title": "一般設定",
+      "account": {
+        "title": "アカウント情報",
+        "name": "名前",
+        "namePlaceholder": "名前を入力",
+        "email": "メールアドレス",
+        "emailPlaceholder": "メールアドレスを入力",
+        "button": "変更を保存",
+        "saving": "保存中..."
+      }
+    },
+    "security": {
+      "title": "セキュリティ設定",
+      "password": {
+        "title": "パスワード",
+        "currentPassword": "現在のパスワード",
+        "newPassword": "新しいパスワード",
+        "confirmPassword": "新しいパスワードの確認",
+        "button": "パスワードを更新",
+        "updating": "更新中..."
+      },
+      "deleteAccount": {
+        "title": "アカウントの削除",
+        "description": "アカウントの削除は元に戻せません。慎重に進めてください。",
+        "confirmPassword": "パスワードの確認",
+        "button": "アカウントを削除",
+        "deleting": "削除中..."
+      }
+    },
+    "settings": {
+      "title": "チーム設定",
+      "subscription": {
+        "title": "チームサブスクリプション",
+        "currentPlan": "現在のプラン",
+        "billedMonthly": "月額請求",
+        "trialPeriod": "試用期間",
+        "noSubscription": "アクティブなサブスクリプションなし",
+        "manageButton": "サブスクリプションを管理"
+      },
+      "teamMembers": {
+        "title": "チームメンバー",
+        "role": "役割",
+        "removeButton": "削除",
+        "removingButton": "削除中..."
+      },
+      "errors": {
+        "noTeam": "ユーザーはチームに所属していません",
+        "teamNotFound": "チームが見つかりません"
+      }
+    },
+    "inviteTeam": {
+      "title": "チームメンバーを招待",
+      "email": {
+        "label": "メールアドレス",
+        "placeholder": "メールアドレスを入力"
+      },
+      "role": {
+        "label": "役割",
+        "member": "メンバー",
+        "owner": "オーナー"
+      },
+      "button": {
+        "invite": "メンバーを招待",
+        "inviting": "招待中..."
+      },
+      "permissions": {
+        "ownerOnly": "チームオーナーのみが新しいメンバーを招待できます。"
+      }
+    }
+  }
+}

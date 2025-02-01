@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label';
 import { useActionState } from 'react';
 import { inviteTeamMember } from '@/app/(login)/actions';
 import { useUser } from '@/lib/auth';
+import { useTranslations } from 'next-intl';
 
 type ActionState = {
   error?: string;
@@ -23,6 +24,7 @@ type ActionState = {
 
 export function InviteTeamMember() {
   const { user } = useUser();
+  const t = useTranslations('Dashboard.inviteTeam');
   const isOwner = user?.role === 'owner';
   const [inviteState, inviteAction, isInvitePending] = useActionState<
     ActionState,
@@ -32,23 +34,23 @@ export function InviteTeamMember() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Invite Team Member</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
       </CardHeader>
       <CardContent>
         <form action={inviteAction} className="space-y-4">
           <div>
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('email.label')}</Label>
             <Input
               id="email"
               name="email"
               type="email"
-              placeholder="Enter email"
+              placeholder={t('email.placeholder')}
               required
               disabled={!isOwner}
             />
           </div>
           <div>
-            <Label>Role</Label>
+            <Label>{t('role.label')}</Label>
             <RadioGroup
               defaultValue="member"
               name="role"
@@ -57,11 +59,11 @@ export function InviteTeamMember() {
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="member" id="member" />
-                <Label htmlFor="member">Member</Label>
+                <Label htmlFor="member">{t('role.member')}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="owner" id="owner" />
-                <Label htmlFor="owner">Owner</Label>
+                <Label htmlFor="owner">{t('role.owner')}</Label>
               </div>
             </RadioGroup>
           </div>
@@ -79,12 +81,12 @@ export function InviteTeamMember() {
             {isInvitePending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Inviting...
+                {t('button.inviting')}
               </>
             ) : (
               <>
                 <PlusCircle className="mr-2 h-4 w-4" />
-                Invite Member
+                {t('button.invite')}
               </>
             )}
           </Button>
@@ -93,7 +95,7 @@ export function InviteTeamMember() {
       {!isOwner && (
         <CardFooter>
           <p className="text-sm text-muted-foreground">
-            You must be a team owner to invite new members.
+            {t('permissions.ownerOnly')}
           </p>
         </CardFooter>
       )}

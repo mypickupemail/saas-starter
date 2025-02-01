@@ -126,6 +126,25 @@
         "noTeam": "User is not part of a team",
         "teamNotFound": "Team not found"
       }
+    },
+    "inviteTeam": {
+      "title": "Invite Team Member",
+      "email": {
+        "label": "Email",
+        "placeholder": "Enter email"
+      },
+      "role": {
+        "label": "Role",
+        "member": "Member",
+        "owner": "Owner"
+      },
+      "button": {
+        "invite": "Invite Member",
+        "inviting": "Inviting..."
+      },
+      "permissions": {
+        "ownerOnly": "You must be a team owner to invite new members."
+      }
     }
   }
 }
