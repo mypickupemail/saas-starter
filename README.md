@@ -7,7 +7,7 @@ This is a starter template for building a SaaS application using **Next.js** wit
 
 
 
-**Demo: [nextjs-prisma-stripe-saas-starter-7102g2368.vercel.app/](nextjs-prisma-stripe-saas-starter-7102g2368.vercel.app/)**
+**Demo: [nextjs-prisma-stripe-saas-starter.vercel.app/](https://nextjs-prisma-stripe-saas-starter.vercel.app/)**
 
 
 ## 🚀 Project Refactor and Upgrade 
