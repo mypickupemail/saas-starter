@@ -12,7 +12,7 @@ type PrismaAdapterReturn = ReturnType<typeof BasePrismaAdapter>;
  * @returns
  */
 export function PrismaAdapter(arg: PrismaAdapterArg) {
-  const { createUser: _createUser, ...adapter } = BasePrismaAdapter(arg);
+  const { createUser: _createUser,getUserByAccount: _getUserByAccount, ...adapter } = BasePrismaAdapter(arg);
   const createUser: PrismaAdapterReturn["createUser"] = _createUser
     ? async (user) => {
         // @ts-expect-error adapter role
@@ -35,13 +35,28 @@ export function PrismaAdapter(arg: PrismaAdapterArg) {
           },
         });
         await logActivity(team.id, createdUser.id, ActivityType.SIGN_UP);
-
+        // @ts-expect-error adapter role
+        createdUser.teamId = team.id;
         return createdUser;
       }
     : undefined;
-
+    
+  const getUserByAccount: PrismaAdapterReturn["getUserByAccount"] = _getUserByAccount
+    ? async (providerAccountId) => {
+        const user =  await _getUserByAccount(providerAccountId)
+        if(!user) return null
+        const team = await db.teamMember.findFirst({
+          where:{
+            userId:user.id
+          }
+        })
+        // @ts-expect-error adapter teamId
+        user.teamId = team?.teamId
+        return user
+  } : undefined
   return {
     createUser,
+    getUserByAccount,
     ...adapter,
   };
 }
