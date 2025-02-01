@@ -375,5 +375,7 @@ export const inviteTeamMember = validatedActionWithUser(
 );
 
 export async function oauthSignIn() {
-  return signInService("google");
+  return signInService("google",{
+    redirectTo:"/dashboard"
+  });
 }
