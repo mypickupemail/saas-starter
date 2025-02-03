@@ -1,5 +1,43 @@
 # Changelog
 
+## [1.1.0](https://www.github.com/liuhuapiaoyuan/nextjs-prisma-stripe-saas-starter/compare/v1.0.0...v1.1.0) (2025-02-03)
+
+
+### Features
+
+* **auth:** add teamId to user in PrismaAdapter ([b924972](https://www.github.com/liuhuapiaoyuan/nextjs-prisma-stripe-saas-starter/commit/b924972a383922fff84818459d574329892a32a0))
+* **auth:** enhance user creation with team and activity logging ([42d1394](https://www.github.com/liuhuapiaoyuan/nextjs-prisma-stripe-saas-starter/commit/42d1394475a6fbfdab6fc7513709bfdb42b80149))
+* **login:** add redirect to dashboard after OAuth sign-in ([3db4dfb](https://www.github.com/liuhuapiaoyuan/nextjs-prisma-stripe-saas-starter/commit/3db4dfb5172865ab858f03c75424f49e70127f81))
+* migrate to postgres database ([ebed861](https://www.github.com/liuhuapiaoyuan/nextjs-prisma-stripe-saas-starter/commit/ebed861594e5a69ccf657f8a0fad4a932db0920c))
+
+
+### Bug Fixes
+
+* add prisma auto genereate ([2dd12be](https://www.github.com/liuhuapiaoyuan/nextjs-prisma-stripe-saas-starter/commit/2dd12be2e8186515c33e03901a0aac8323fb4116))
+* fixed auth.js route path ([9453d80](https://www.github.com/liuhuapiaoyuan/nextjs-prisma-stripe-saas-starter/commit/9453d80169a4dbf393d827d113768c90400c8812))
+* oauth login default password: 12345678 ([c8b5604](https://www.github.com/liuhuapiaoyuan/nextjs-prisma-stripe-saas-starter/commit/c8b5604b31174a2e13ccd7202cb5377174aacd86))
+* remove npmrc ([de61d95](https://www.github.com/liuhuapiaoyuan/nextjs-prisma-stripe-saas-starter/commit/de61d951b49f307a5a663a7abae5cfaf3f7a217d))
+* remove some dept ([bbf3acc](https://www.github.com/liuhuapiaoyuan/nextjs-prisma-stripe-saas-starter/commit/bbf3accc0dc4f2221bcd28b28089b02a3c2fc64a))
+* remove some dept ([90004f2](https://www.github.com/liuhuapiaoyuan/nextjs-prisma-stripe-saas-starter/commit/90004f29fc0f19d5fa0797aa96335831a78dd596))
+* update prisma auto deploy ([bcf442a](https://www.github.com/liuhuapiaoyuan/nextjs-prisma-stripe-saas-starter/commit/bcf442a095a4e6d9ab7b42b9c8254dbbeb86b9a5))
+
+
+### Performance Improvements
+
+* **i18n:** add typescript support ([b306247](https://www.github.com/liuhuapiaoyuan/nextjs-prisma-stripe-saas-starter/commit/b30624760b4b37e1cf9e137fe849d634d0b22a1c))
+
+
+### Documentation
+
+* update readme ([49d2818](https://www.github.com/liuhuapiaoyuan/nextjs-prisma-stripe-saas-starter/commit/49d2818ba385e2f536cc1fcf93366f23f256bbe9))
+* update readme ([b2aff2b](https://www.github.com/liuhuapiaoyuan/nextjs-prisma-stripe-saas-starter/commit/b2aff2bf5fd8df4183b39a0067c3da5cd9f9de87))
+* update readme ([0f8a77a](https://www.github.com/liuhuapiaoyuan/nextjs-prisma-stripe-saas-starter/commit/0f8a77ae5682bf5255b5eeb043aebecddcd0a39c))
+
+
+### Code Refactoring
+
+* **auth:** make profile function asynchronous in Google provider ([096182b](https://www.github.com/liuhuapiaoyuan/nextjs-prisma-stripe-saas-starter/commit/096182b993a3283ff99907f714378fd8fcc01886))
+
 ## 1.0.0 (2025-02-01)
 
 
