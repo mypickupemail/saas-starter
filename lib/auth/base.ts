@@ -1,4 +1,6 @@
 import NextAuth, { DefaultSession, NextAuthConfig } from "next-auth";
+import db from "@/lib/db";
+import { Role } from "@prisma/client";
 
 declare module "next-auth" {
   /**
@@ -7,7 +9,8 @@ declare module "next-auth" {
   interface Session {
     user: {
       teamId: string|null;
-      role: "owner" | "member" | string
+      role: string;
+      activeTeamRole?: Role | null;
     } & DefaultSession["user"];
   }
 } 
@@ -23,22 +26,31 @@ export const AuthConfig = {
         ...session,
         user: {
           ...session.user,
-          id:token.sub,
-          teamId:token.teamId,
-          role: token.role
+          id: token.sub,
+          teamId: token.teamId as string | null,
+          role: token.role as string,
+          activeTeamRole: token.activeTeamRole as Role | null,
         },
       }
     },
-    jwt({ token, user }) {
-      if(user){
-        return {
-          ...token,
-          teamId: ('teamId' in user && typeof user.teamId==='string')? user.teamId : null ,
-          role: ('role' in user && typeof user.role==='string')? user.role : null 
-        }
+    async jwt({ token, user, account, profile }) {
+      if (user) {
+        token.role = (user as any).role;
+        token.teamId = (user as any).teamId;
 
+        if ((user as any).teamId) {
+          const teamMember = await db.teamMember.findFirst({
+            where: {
+              userId: user.id,
+              teamId: (user as any).teamId,
+            },
+          });
+          token.activeTeamRole = teamMember?.role ?? null;
+        } else {
+          token.activeTeamRole = null;
+        }
       }
-      return token
+      return token;
     }
   },
 } satisfies NextAuthConfig;

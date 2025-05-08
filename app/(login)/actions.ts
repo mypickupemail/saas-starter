@@ -16,7 +16,7 @@ import {
   signIn as signInService,
 } from "@/lib/auth/config";
 import { comparePasswords, hashPassword } from "@/lib/auth/password_utils";
-import { Team } from "@prisma/client";
+import { Team, Role } from "@prisma/client";
 import { logActivity } from "@/lib/db/queries";
 
 const signInSchema = z.object({
@@ -70,7 +70,7 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
   const newUser = {
     email,
     passwordHash,
-    role: "owner", // Default role, will be overridden if there's an invitation
+    role: Role.MEMBER,
   };
 
 
@@ -88,7 +88,7 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
     }
 
     let teamId: string;
-    let userRole: string;
+    let userRole: Role;
     let createdTeam: Team | null = null;
 
     if (inviteId) {
@@ -126,6 +126,7 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
       createdTeam = await db.team.create({
         data: {
           name: newTeam.name,
+          ownerId: createdUser.id,
         },
       });
       // db.insert(teams).values(newTeam).returning();
@@ -139,7 +140,7 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
       }
 
       teamId = createdTeam.id;
-      userRole = "owner";
+      userRole = Role.OWNER;
 
       await logActivity(teamId, createdUser.id, ActivityType.CREATE_TEAM);
     }
@@ -162,8 +163,12 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
 
     const redirectTo = formData.get("redirect") as string | null;
     if (redirectTo === "checkout") {
-      const priceId = formData.get("priceId") as string;
-      return createCheckoutSession({ team: createdTeam, priceId });
+      const priceId = formData.get("priceId") as string | null;
+      if (priceId) {
+        return createCheckoutSession({ team: createdTeam, priceId });
+      } else {
+        console.error("Checkout attempted without a priceId.");
+      }
     }
   
 
@@ -173,8 +178,8 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
 export async function signOut() {
   const session = await auth();
   const user = session?.user;
-  if (user?.id) {
-    await logActivity(user?.teamId, user.id, ActivityType.SIGN_OUT);
+  if (user?.id && user.teamId) {
+    await logActivity(user.teamId, user.id, ActivityType.SIGN_OUT);
   }
   await signOutService();
 }
@@ -315,7 +320,7 @@ export const removeTeamMember = validatedActionWithUser(
 
 const inviteTeamMemberSchema = z.object({
   email: z.string().email("Invalid email address"),
-  role: z.enum(["member", "owner"]),
+  role: z.enum([Role.MEMBER, Role.OWNER]),
 });
 
 export const inviteTeamMember = validatedActionWithUser(

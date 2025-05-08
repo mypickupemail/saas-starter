@@ -40,7 +40,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             email: credentials.email
           },
           include: {
-            teamMembers: true,
+            teamMemberships: true,
           },
         })
         if (!user) {
@@ -55,18 +55,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new Error("User not found or incorrect password1.");
         }
         
-        const teamId = user.teamMembers.find(
-          (z) => z.teamId === credentials.teamId
+        const teamMembership = user.teamMemberships.find(
+          (tm) => tm.teamId === credentials.teamId
         );
         
-        if (hasTeam && !teamId) {
+        if (hasTeam && !teamMembership) {
           throw new Error("User is not a member of the specified team.");
         }
         
-        return {
-          ...user,
-          teamId: teamId??user.teamMembers[0].teamId
-        };
+        if (hasTeam) {
+          // If hasTeam is true, teamMembership must be valid, and teamMembership.teamId is a string.
+          return {
+            ...user, // Prisma user object
+            teamId: teamMembership!.teamId // Definitely a string
+          };
+        } else {
+          // If not targeting a specific team, teamId can be the first one found or null.
+          return {
+            ...user, // Prisma user object
+            teamId: user.teamMemberships[0]?.teamId ?? null // string | null
+          };
+        }
       },
     }),
   ],

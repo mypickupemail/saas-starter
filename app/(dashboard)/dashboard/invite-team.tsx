@@ -16,6 +16,7 @@ import { useActionState } from 'react';
 import { inviteTeamMember } from '@/app/(login)/actions';
 import { useUser } from '@/lib/auth';
 import { useTranslations } from 'next-intl';
+import { Role } from "@prisma/client";
 
 type ActionState = {
   error?: string;
@@ -25,7 +26,7 @@ type ActionState = {
 export function InviteTeamMember() {
   const { user } = useUser();
   const t = useTranslations('Dashboard.inviteTeam');
-  const isOwner = user?.role === 'owner';
+  const isOwner = user?.activeTeamRole === Role.OWNER;
   const [inviteState, inviteAction, isInvitePending] = useActionState<
     ActionState,
     FormData

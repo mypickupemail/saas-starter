@@ -50,7 +50,7 @@ async function seed() {
     data:{
       email: email,
       passwordHash: passwordHash,
-      role: "owner",
+      role: "OWNER",
     }
   }) 
 
@@ -64,7 +64,7 @@ async function seed() {
     data: {
       teamId: team.id,
       userId: user.id,
-      role: 'owner',
+      role: 'OWNER',
     }
   })
  

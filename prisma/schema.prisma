@@ -7,28 +7,458 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model ActivityLog {
-  id        String   @id @default(cuid())
-  team      Team     @relation(fields: [teamId], references: [id])
-  teamId    String
-  user      User?    @relation(fields: [userId], references: [id])
-  userId    String?
-  action    String
-  timestamp DateTime @default(now())
-  ipAddress String?  @db.VarChar(255) 
+// ENUMS
 
+enum Role {
+  ADMIN
+  MEMBER
+  OWNER
+}
+
+enum SubscriptionStatus {
+  TRIALING
+  ACTIVE
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+  PAST_DUE
+  CANCELED
+  UNPAID
+  PAUSED
+}
+
+enum TokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+  API_ACCESS
+}
+
+enum NotificationType {
+  EMAIL_TRANSACTIONAL
+  IN_APP_ALERT
+  ANNOUNCEMENT
+  SYSTEM_MESSAGE
+}
+
+enum TransactionType {
+  SUBSCRIPTION_PAYMENT
+  ONE_TIME_PRODUCT
+  CREDIT_PURCHASE
+  REFUND
+  MANUAL_ADJUSTMENT
+}
+
+enum ModelProvider {
+  OPENAI
+  GOOGLE
+  ANTHROPIC
+  DEEPSEEK
+  MISTRAL
+  ELEVENLABS
+  SUNOAI
+  STABILITYAI
+}
+
+enum MediaType {
+  AUDIO
+  IMAGE
+  VIDEO
+  TEXT_DOCUMENT
+  FILE
+}
+
+// AI CORE MODELS
+
+model Model {
+  id                String        @id @default(cuid())
+  name              String        @unique @db.VarChar(255)
+  description       String?       @db.Text
+  provider          ModelProvider
+  modelIdentifier   String        @map("model_identifier") @db.VarChar(255)
+  capabilities      String[]
+  inputPrice        Float?        @map("input_price_per_million_tokens")
+  outputPrice       Float?        @map("output_price_per_million_tokens")
+  accessLevel       Int           @default(0) @map("access_level")
+  isActive          Boolean       @default(true) @map("is_active")
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+
+  messages          Message[]
+  usageLogs         UsageLog[]
+
+  @@map("ai_models")
+}
+
+model APIKey {
+  id            String    @id @default(cuid())
+  teamId        String?
+  team          Team?     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  serviceName   String    @map("service_name") @db.VarChar(100)
+  hashedKey     String    @map("hashed_key") @db.Text
+  prefix        String?   @map("key_prefix") @db.VarChar(10)
+  description   String?   @db.Text
+  scopes        String[]
+  expiresAt     DateTime? @map("expires_at")
+  lastUsedAt    DateTime? @map("last_used_at")
+  isActive      Boolean   @default(true) @map("is_active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@index([serviceName, isActive])
+  @@index([teamId])
+  @@index([userId])
+  @@map("api_keys")
+}
+
+model Chat {
+  id            String    @id @default(cuid())
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  teamId        String?
+  team          Team?     @relation(fields: [teamId], references: [id], onDelete: SetNull)
+
+  title         String?   @db.VarChar(255)
+  context       String?   @db.Text
+  metadata      Json?
+  isArchived    Boolean   @default(false) @map("is_archived")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  messages      Message[]
+
+  @@index([userId])
+  @@index([teamId])
+  @@index([updatedAt])
+  @@map("chats")
+}
+
+model Message {
+  id            String    @id @default(cuid())
+  chatId        String
+  chat          Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  content       String    @db.Text
+  senderType    String    @map("sender_type") @db.VarChar(50) // "USER", "AI", "SYSTEM"
+  modelId       String?
+  model         Model?    @relation(fields: [modelId], references: [id], onDelete: SetNull)
+
+  replyToId     String?   @map("reply_to_message_id")
+
+  cost          Float?    @default(0)
+  tokenCount    Int?      @map("token_count")
+  isFlagged     Boolean   @default(false) @map("is_flagged")
+  sequence      Int
+  metadata      Json?
+
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  media         Media[]
+
+  @@unique([chatId, sequence])
+  @@index([chatId])
+  @@index([userId])
+  @@index([modelId])
+  @@map("messages")
+}
+
+model Media {
+  id            String    @id @default(cuid())
+  messageId     String?
+  message       Message?  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  teamId        String?
+  team          Team?     @relation(fields: [teamId], references: [id], onDelete: SetNull)
+
+  type          MediaType
+  url           String    @db.Text
+  storageKey    String?   @map("storage_key") @db.Text
+  contentType   String    @map("content_type") @db.VarChar(100)
+  sizeBytes     Int?      @map("size_bytes")
+  fileName      String?   @map("file_name") @db.VarChar(255)
+  description   String?   @db.Text
+  metadata      Json?
+
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  
+  @@index([messageId])
+  @@index([userId])
+  @@index([teamId])
+  @@index([type])
+  @@map("media_items")
+}
+
+// BILLING & SUBSCRIPTIONS
+
+model SubscriptionPlan {
+  id                    String        @id @default(cuid())
+  name                  String        @unique @db.VarChar(100)
+  displayName           String        @map("display_name") @db.VarChar(255)
+  description           String?       @db.Text
+  
+  monthlyPrice          Float?        @map("monthly_price")
+  yearlyPrice           Float?        @map("yearly_price")
+  trialDays             Int?          @default(0) @map("trial_days")
+
+  stripeProductId       String?       @unique @map("stripe_product_id") @db.VarChar(255)
+  stripeMonthlyPriceId  String?       @unique @map("stripe_monthly_price_id") @db.VarChar(255)
+  stripeYearlyPriceId   String?       @unique @map("stripe_yearly_price_id") @db.VarChar(255)
+
+  maxTeamMembers        Int?          @map("max_team_members")
+  dailyCredits          Float?        @map("daily_credits")
+  
+  isActive              Boolean       @default(true) @map("is_active")
+  isPublic              Boolean       @default(true) @map("is_public")
+  displayOrder          Int?          @map("display_order")
+
+  createdAt             DateTime      @default(now()) @map("created_at")
+  updatedAt             DateTime      @updatedAt @map("updated_at")
+
+  subscriptions         Subscription[]
+  planFeatures          PlanFeature[]
+
+  @@map("subscription_plans")
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String?            @unique
+  user                 User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  teamId               String?            @unique
+  team                 Team?              @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  
+  planId               String
+  plan                 SubscriptionPlan   @relation(fields: [planId], references: [id])
+  
+  status               SubscriptionStatus
+  
+  stripeSubscriptionId String?            @unique @map("stripe_subscription_id") @db.VarChar(255)
+  
+  currentPeriodStart   DateTime?          @map("current_period_start")
+  currentPeriodEnd     DateTime?          @map("current_period_end")
+  trialEndsAt          DateTime?          @map("trial_ends_at")
+  cancelAtPeriodEnd    Boolean            @default(false) @map("cancel_at_period_end")
+  canceledAt           DateTime?          @map("canceled_at")
+  endedAt              DateTime?          @map("ended_at")
+
+  currentCredits       Float?             @map("current_credits")
+  lastCreditReset      DateTime?          @map("last_credit_reset_at")
+  nextCreditReset      DateTime?          @map("next_credit_reset_at")
+
+  metadata             Json?
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([teamId])
+  @@index([planId])
+  @@index([status])
+  @@index([stripeSubscriptionId])
+  @@map("subscriptions")
+}
+
+model Transaction {
+  id                    String          @id @default(cuid())
+  userId                String?
+  user                  User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  teamId                String?
+  team                  Team?           @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  
+  type                  TransactionType
+  status                String          @db.VarChar(50) // "pending", "succeeded", "failed", "refunded"
+  amount                Float
+  currency              String          @db.VarChar(10) @default("usd")
+  description           String?         @db.Text
+  
+  stripePaymentIntentId String?         @unique @map("stripe_payment_intent_id") @db.VarChar(255)
+  stripeChargeId        String?         @unique @map("stripe_charge_id") @db.VarChar(255)
+  stripeInvoiceId       String?         @map("stripe_invoice_id") @db.VarChar(255)
+  
+  relatedSubscriptionId String?         @map("related_subscription_id")
+
+  metadata              Json?
+  processedAt           DateTime?       @map("processed_at")
+  createdAt             DateTime        @default(now()) @map("created_at")
+  updatedAt             DateTime        @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([teamId])
+  @@index([type])
+  @@index([status])
+  @@index([stripePaymentIntentId])
+  @@map("transactions")
+}
+
+// FEATURES & ENTITLEMENTS
+
+model Feature {
+  id            String    @id @default(cuid())
+  key           String    @unique @db.VarChar(100)
+  displayName   String    @map("display_name") @db.VarChar(255)
+  description   String?   @db.Text
+  isActive      Boolean   @default(true) @map("is_active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  planFeatures  PlanFeature[]
+
+  @@map("features")
+}
+
+model PlanFeature {
+  id        String   @id @default(cuid())
+  planId    String
+  plan      SubscriptionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  featureId String
+  feature   Feature  @relation(fields: [featureId], references: [id], onDelete: Cascade)
+  
+  limit     String?  @db.VarChar(255)
+  enabled   Boolean  @default(true)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([planId, featureId])
+  @@map("plan_features")
+}
+
+// USER SUPPORT & COMMS
+
+model Token {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        TokenType
+  tokenHash   String    @unique @map("token_hash") @db.Text
+  expiresAt   DateTime  @map("expires_at")
+  usedAt      DateTime? @map("used_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  
+  @@index([userId, type])
+  @@index([expiresAt])
+  @@map("tokens")
+}
+
+model Notification {
+  id                String           @id @default(cuid())
+  recipientUserId   String?          @map("recipient_user_id")
+  recipientUser     User?            @relation("UserNotifications", fields: [recipientUserId], references: [id], onDelete: Cascade)
+
+  type              NotificationType
+  title             String?          @db.VarChar(255)
+  content           String           @db.Text
+  readAt            DateTime?        @map("read_at")
+  link              String?          @db.Text
+  
+  audienceType      String?          @map("audience_type") @db.VarChar(50)
+  publishedAt       DateTime?        @map("published_at")
+  expiresAt         DateTime?        @map("expires_at")
+
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+
+  @@index([recipientUserId])
+  @@index([type])
+  @@index([publishedAt, expiresAt])
+  @@map("notifications")
+}
+
+// LOGGING
+
+model UsageLog {
+  id            String    @id @default(cuid())
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  teamId        String?
+  team          Team?     @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  modelId       String?
+  model         Model?    @relation(fields: [modelId], references: [id], onDelete: SetNull)
+  featureKey    String?   @map("feature_key") @db.VarChar(100)
+
+  operation     String    @db.VarChar(100)
+  tokenCountIn  Int?      @map("token_count_in")
+  tokenCountOut Int?      @map("token_count_out")
+  cost          Float?
+  durationMs    Int?      @map("duration_ms")
+  metadata      Json?
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([teamId])
+  @@index([modelId])
+  @@index([featureKey])
+  @@index([operation])
+  @@index([createdAt])
+  @@map("usage_logs")
+}
+
+model ErrorLog {
+  id               String    @id @default(cuid())
+  userId           String?
+  user             User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  teamId           String?
+  team             Team?     @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  
+  serviceName      String    @map("service_name") @db.VarChar(100)
+  operation        String?   @db.VarChar(100)
+  errorCode        String?   @map("error_code") @db.VarChar(50)
+  message          String    @db.Text
+  stackTrace       String?   @db.Text @map("stack_trace")
+  metadata         Json?
+  severity         String    @default("error") @db.VarChar(50)
+  resolved         Boolean   @default(false)
+  resolvedAt       DateTime? @map("resolved_at")
+  resolvedByUserId String?   @map("resolved_by_user_id")
+
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([teamId])
+  @@index([serviceName])
+  @@index([severity])
+  @@index([resolved])
+  @@map("error_logs")
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  teamId     String?
+  team       Team?    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  action     String   @db.VarChar(255)
+  targetId   String?  @map("target_id") @db.VarChar(255)
+  targetType String?  @map("target_type") @db.VarChar(100)
+  details    Json?
+  
+  timestamp  DateTime @default(now()) @map("timestamp") // Ensure mapping if needed, or just use @default(now())
+  ipAddress  String?  @db.VarChar(45) @map("ip_address")
+
+  @@index([teamId])
+  @@index([userId])
+  @@index([action])
+  @@index([targetId, targetType])
   @@map("activity_logs")
 }
 
 model Invitation {
   id          String   @id @default(cuid())
-  team        Team     @relation(fields: [teamId], references: [id])
+  team        Team     @relation(fields: [teamId], references: [id], onDelete: Cascade) // Added onDelete
   teamId      String
-  email       String   @db.VarChar(255) // 明确指定长度
-  role        String   @db.VarChar(50)
-  invitedBy   User     @relation(fields: [invitedById], references: [id])
+  email       String   @db.VarChar(255)
+  role        Role     // Using the Role enum
+  invitedBy   User     @relation("UserInvitations", fields: [invitedById], references: [id])
   invitedById String
-  invitedAt   DateTime @default(now())
+  invitedAt   DateTime @default(now()) @map("invited_at")
   status      String   @default("pending") @db.VarChar(50)
 
   @@map("invitations")
@@ -36,48 +466,74 @@ model Invitation {
 
 model TeamMember {
   id       String   @id @default(cuid())
-  user     User     @relation(fields: [userId], references: [id])
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   String
-  team     Team     @relation(fields: [teamId], references: [id])
+  team     Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
   teamId   String
-  role     String   @db.VarChar(50)
-  joinedAt DateTime @default(now())
+  role     Role     // Using the Role enum
+  joinedAt DateTime @default(now()) @map("joined_at")
 
+  @@unique([userId, teamId])
   @@map("team_members")
 }
 
 model Team {
   id                   String        @id @default(cuid())
   name                 String        @db.VarChar(255)
+  ownerId              String?       // Designates the team owner
+  owner                User?         @relation("TeamOwner", fields: [ownerId], references: [id], onDelete: SetNull)
   createdAt            DateTime      @default(now()) @map("created_at")
-  updatedAt            DateTime      @default(now()) @map("updated_at")
+  updatedAt            DateTime      @updatedAt @map("updated_at")
   stripeCustomerId     String?       @unique @map("stripe_customer_id") @db.VarChar(255)
-  stripeSubscriptionId String?       @unique @map("stripe_subscription_id") @db.VarChar(255)
-  stripeProductId      String?       @map("stripe_product_id") @db.VarChar(255)
-  planName             String?       @map("plan_name") @db.VarChar(100)
-  subscriptionStatus   String?       @map("subscription_status") @db.VarChar(50)
+  
   activityLogs         ActivityLog[]
   invitations          Invitation[]
   members              TeamMember[]
 
+  // New relations
+  apiKeys              APIKey[]
+  chats                Chat[]
+  mediaItems           Media[]
+  subscription         Subscription?
+  transactions         Transaction[]
+  usageLogs            UsageLog[]
+  errorLogs            ErrorLog[]
+  
+  @@index([ownerId])
   @@map("teams")
 }
 
 model User {
-  id            String        @id @default(cuid())
-  name          String?       @db.VarChar(255)
-  email         String        @unique @db.VarChar(255)
-  emailVerified DateTime?
-  image         String?       @db.VarChar(255)
-  passwordHash  String        @map("password_hash") @db.VarChar(255)
-  role          String        @default("member") @db.VarChar(50)
-  createdAt     DateTime      @default(now()) @map("created_at")
-  updatedAt     DateTime      @default(now()) @map("updated_at")
-  deletedAt     DateTime?     @map("deleted_at")
-  activityLogs  ActivityLog[]
-  invitations   Invitation[]
-  teamMembers   TeamMember[]
-  accounts      Account[]
+  id                 String        @id @default(cuid())
+  name               String?       @db.VarChar(255)
+  email              String        @unique @db.VarChar(255)
+  emailVerifiedAt    DateTime?     @map("email_verified_at")
+  image              String?       @db.VarChar(255)
+  passwordHash       String?       @map("password_hash") @db.VarChar(255)
+  role               Role          @default(MEMBER)
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
+  deletedAt          DateTime?     @map("deleted_at")
+  stripeCustomerId   String?       @unique @map("stripe_customer_id") @db.VarChar(255)
+
+  activityLogs       ActivityLog[]
+  invitationsSent    Invitation[]  @relation("UserInvitations")
+  teamMemberships    TeamMember[]
+  accounts           Account[]
+  ownedTeams         Team[]        @relation("TeamOwner")
+
+
+  // New relations
+  apiKeys            APIKey[]
+  chats              Chat[]
+  messagesSent       Message[]
+  mediaItems         Media[]
+  subscription       Subscription?
+  transactions       Transaction[]
+  tokens             Token[]
+  notifications      Notification[] @relation("UserNotifications")
+  usageLogs          UsageLog[]
+  errorLogs          ErrorLog[]
 
   @@map("users")
 }
